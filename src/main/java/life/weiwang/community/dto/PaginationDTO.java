@@ -28,23 +28,10 @@ public class PaginationDTO {
     //总页数
     private Integer totalPage;
 
-    public void setPagenaiton(Integer totalCount, Integer page, Integer size) {
+    public void setPagenaiton(Integer totalPage, Integer page) {
 
-        //分页数
-        totalPage = 0;
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
+        this.totalPage = totalPage;
 
-        if (page < 1) {
-            page = 1;
-
-        }
-        if (page > totalPage) {
-            page = totalPage;
-        }
 
         this.page = page;
 
