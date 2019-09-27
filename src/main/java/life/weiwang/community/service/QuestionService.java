@@ -1,5 +1,6 @@
 package life.weiwang.community.service;
 
+import life.weiwang.community.dto.PaginationDTO;
 import life.weiwang.community.dto.QuestionDTO;
 import life.weiwang.community.mapper.QuestionMapper;
 import life.weiwang.community.mapper.UserMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Service
 public class QuestionService {
     @Autowired
@@ -18,18 +20,37 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<QuestionDTO> list() {
-        List<Question> list = questionMapper.list();
+    //page表示当前页面，size表示一页有几个问题
+    public PaginationDTO list(Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalCount = questionMapper.count();
+        paginationDTO.setPagenaiton(totalCount, page, size);
+
+        if (page < 1) {
+            page = 1;
+
+        }
+        if (page > paginationDTO.getTotalPage()) {
+            page = paginationDTO.getTotalPage();
+        }
+
+        //offset = size*(page-1)
+        Integer offset = size * (page - 1);
+        List<Question> list = questionMapper.list(offset, size);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
+
         for (Question question : list) {
             User user = userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             //这是springboot内置的一个工具类，可以把属性快速复制到另一个model
-            BeanUtils.copyProperties(question,questionDTO);
+            BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
 
         }
-        return questionDTOList;
+        paginationDTO.setQuestions(questionDTOList);
+
+
+        return paginationDTO;
     }
 }
