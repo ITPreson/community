@@ -53,10 +53,10 @@ public class AuthorizeController {
             User user = new User();
             String token = UUID.randomUUID().toString();
             user.setToken(token);
-            user.setAccount_id(String.valueOf(githubUser.getId()));
+            user.setAccountId(String.valueOf(githubUser.getId()));
             user.setName(githubUser.getName());
-            user.setAvatarUrl(githubUser.getAvatar_url());
-            System.out.println(user.getAccount_id());
+            user.setAvatarurl(githubUser.getAvatar_url());
+            System.out.println(user.getAccountId());
             userService.createOrUpdate(user);
             //写入cookie
             response.addCookie(new Cookie("token",token));
