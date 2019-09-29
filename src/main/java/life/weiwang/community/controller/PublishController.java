@@ -4,10 +4,12 @@ import life.weiwang.community.mapper.QuestionMapper;
 import life.weiwang.community.mapper.UserMapper;
 import life.weiwang.community.model.Question;
 import life.weiwang.community.model.User;
+import life.weiwang.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,7 +21,20 @@ public class PublishController {
     @Autowired
     private QuestionMapper questionMapper;
     @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable("id") Integer id,
+                       Model model) {
+        Question question = questionMapper.findById(id);
+        model.addAttribute("title", question.getTitle());
+        model.addAttribute("description", question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        model.addAttribute("id", question.getId());
+        return "publish";
+
+    }
+
 
     @GetMapping("/publish")
     public String publish() {
@@ -28,9 +43,10 @@ public class PublishController {
 
     @PostMapping("/publish")
     public String doPublish(
-            @RequestParam(value = "title") String title,
-            @RequestParam(value = "description") String description,
-            @RequestParam(value = "tag") String tag,
+            @RequestParam(value = "title",required = false) String title,
+            @RequestParam(value = "description",required = false) String description,
+            @RequestParam(value = "tag",required = false) String tag,
+            @RequestParam(value = "id",required = false) Integer id,
             HttpServletRequest request,
             Model model) {
         //用来回显到桌面上
@@ -53,8 +69,8 @@ public class PublishController {
 
         }
         User user = (User) request.getSession().getAttribute("user");
-        if (user == null){
-            model.addAttribute("error","用户未登录");
+        if (user == null) {
+            model.addAttribute("error", "用户未登录");
             return publish();
         }
 
@@ -63,12 +79,10 @@ public class PublishController {
         question.setTag(tag);
         question.setDescription(description);
         question.setCreator(user.getId());
-        question.setGmt_create(System.currentTimeMillis());
-        question.setGmt_modified(question.getGmt_create());
 
-        questionMapper.create(question);
+        question.setId(id);
 
-
+        questionService.createOrUpdate(question);
 
 
 

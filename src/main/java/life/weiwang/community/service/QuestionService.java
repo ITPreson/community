@@ -40,7 +40,7 @@ public class QuestionService {
             page = totalPage;
         }
 
-        paginationDTO.setPagenaiton(totalPage, page);
+        paginationDTO.setPagination(totalPage, page);
 
         //offset = size*(page-1)
         Integer offset = size * (page - 1);
@@ -81,7 +81,7 @@ public class QuestionService {
             page = totalPage;
         }
 
-        paginationDTO.setPagenaiton(totalPage, page);
+        paginationDTO.setPagination(totalPage, page);
 
 
         Integer offset = size * (page - 1);
@@ -101,6 +101,28 @@ public class QuestionService {
 
 
         return paginationDTO;
+
+    }
+
+    public QuestionDTO findById(Integer id) {
+        Question question =  questionMapper.findById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        User user = userMapper.findById(question.getCreator());
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        if (question.getId() == null) {
+            //创建
+            question.setGmt_create(System.currentTimeMillis());
+            question.setGmt_modified(question.getGmt_create());
+            questionMapper.create(question);
+        }else {
+            question.setGmt_modified(System.currentTimeMillis());
+            questionMapper.update(question);
+        }
 
     }
 }
