@@ -54,6 +54,12 @@ public class QuestionService {
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : list) {
+            if(question.getCommentCount()==null){
+                question.setCommentCount(0);
+            }
+            if (question.getViewCount()==null){
+                question.setViewCount(0);
+            }
             User user = userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             //这是springboot内置的一个工具类，可以把属性快速复制到另一个model
@@ -125,6 +131,7 @@ public class QuestionService {
         }
 
 
+
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -155,5 +162,21 @@ public class QuestionService {
             }
         }
 
+    }
+
+    public void increaseView(Integer id) {
+        Question question = questionMapper.selectByPrimaryKey(id);
+        Integer viewCount = question.getViewCount();
+        if (viewCount == null){
+            viewCount = 0;
+
+        }
+        Question updateQuestion = new Question();
+        updateQuestion.setViewCount(viewCount+1);
+        QuestionExample example = new QuestionExample();
+        example.createCriteria()
+                .andIdEqualTo(id);
+
+        questionMapper.updateByExampleSelective(updateQuestion, example);
     }
 }
