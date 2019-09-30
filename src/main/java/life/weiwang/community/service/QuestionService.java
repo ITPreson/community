@@ -2,6 +2,9 @@ package life.weiwang.community.service;
 
 import life.weiwang.community.dto.PaginationDTO;
 import life.weiwang.community.dto.QuestionDTO;
+import life.weiwang.community.exception.CustomizeErrorCode;
+import life.weiwang.community.exception.CustomizeException;
+import life.weiwang.community.exception.ICustomizeErrorCode;
 import life.weiwang.community.mapper.QuestionMapper;
 import life.weiwang.community.mapper.UserMapper;
 import life.weiwang.community.model.Question;
@@ -25,7 +28,7 @@ public class QuestionService {
     //page表示当前页面，size表示一页有几个问题
     public PaginationDTO list(Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
         Integer totalPage;
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -70,7 +73,7 @@ public class QuestionService {
         QuestionExample example = new QuestionExample();
         example.createCriteria()
                 .andCreatorEqualTo(userId);
-        Integer totalCount =(int)questionMapper.countByExample(example);
+        Integer totalCount = (int) questionMapper.countByExample(example);
 
         Integer totalPage;
         if (totalCount % size == 0) {
@@ -116,10 +119,14 @@ public class QuestionService {
     }
 
     public QuestionDTO findById(Integer id) {
-        Question question =  questionMapper.selectByPrimaryKey(id);
+        Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
+
 
         QuestionDTO questionDTO = new QuestionDTO();
-        BeanUtils.copyProperties(question,questionDTO);
+        BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
         questionDTO.setUser(user);
         return questionDTO;
@@ -131,7 +138,7 @@ public class QuestionService {
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             questionMapper.insert(question);
-        }else {
+        } else {
 
             Question updateQuestion = new Question();
             updateQuestion.setGmtModified(System.currentTimeMillis());
@@ -142,7 +149,10 @@ public class QuestionService {
             example.createCriteria()
                     .andIdEqualTo(question.getId());
 
-            questionMapper.updateByExampleSelective(updateQuestion, example);
+            int update = questionMapper.updateByExampleSelective(updateQuestion, example);
+            if (update != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
 
     }
