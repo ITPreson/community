@@ -4,7 +4,6 @@ import life.weiwang.community.dto.PaginationDTO;
 import life.weiwang.community.dto.QuestionDTO;
 import life.weiwang.community.exception.CustomizeErrorCode;
 import life.weiwang.community.exception.CustomizeException;
-import life.weiwang.community.exception.ICustomizeErrorCode;
 import life.weiwang.community.mapper.QuestionMapper;
 import life.weiwang.community.mapper.UserMapper;
 import life.weiwang.community.model.Question;
@@ -74,7 +73,7 @@ public class QuestionService {
         return paginationDTO;
     }
 
-    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+    public PaginationDTO list(Long userId, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         QuestionExample example = new QuestionExample();
         example.createCriteria()
@@ -124,7 +123,7 @@ public class QuestionService {
 
     }
 
-    public QuestionDTO findById(Integer id) {
+    public QuestionDTO findById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
@@ -164,7 +163,7 @@ public class QuestionService {
 
     }
 
-    public void increaseView(Integer id) {
+    public void increaseView(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         Integer viewCount = question.getViewCount();
         if (viewCount == null){

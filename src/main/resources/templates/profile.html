@@ -25,9 +25,9 @@
                 <div class="media-body">
                     <h4 class="media-heading" th:text="${question.title}"></h4>
 
-                    <span class="text-des"><span th:text="${question.getCommentCount}"></span>个回复 • <span
-                            th:text="${question.getViewCount}"></span>次浏览 • <span
-                            th:text="${#dates.format(question.getGmtCreate,'dd MMMM yyyy')}"></span></span>
+                    <span class="text-des"><span th:text="${question.commentCount}"></span>个回复 • <span
+                            th:text="${question.viewCount}"></span>次浏览 • <span
+                            th:text="${#dates.format(question.gmtCreate,'dd MMMM yyyy')}"></span></span>
                 </div>
             </div>
             <nav aria-label="Page navigation">
