@@ -1,5 +1,8 @@
 package life.weiwang.community.model;
 
+import lombok.Data;
+
+@Data
 public class Question {
     /**
      *

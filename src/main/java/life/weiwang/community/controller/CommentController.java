@@ -24,7 +24,7 @@ public class CommentController {
 
     //@ResponseBody可以把对象序列化为json返回给前端
     @ResponseBody
-    @PostMapping(value = "comment")
+    @PostMapping(value = "/comment")
     //@RequestBody可以接受json格式的数据，把json反序列化放入CommentDTO
     public Object post(@RequestBody CommentDTO commentDTO,
                        HttpServletRequest httpServletRequest) {

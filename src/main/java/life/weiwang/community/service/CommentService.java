@@ -64,7 +64,7 @@ public class CommentService {
     }
 
     public void increaseCommentCount(Comment comment) {
-        Question question = questionMapper.selectByPrimaryKey(comment.getParentId()+3l);
+        Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
         Integer commentCount = question.getCommentCount();
         if (commentCount == null){
             commentCount = 0;
