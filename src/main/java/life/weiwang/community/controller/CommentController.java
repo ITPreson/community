@@ -1,6 +1,6 @@
 package life.weiwang.community.controller;
 
-import life.weiwang.community.dto.CommentDTO;
+import life.weiwang.community.dto.CommentCreateDTO;
 import life.weiwang.community.dto.ResponseDTO;
 import life.weiwang.community.exception.CustomizeErrorCode;
 import life.weiwang.community.model.Comment;
@@ -26,7 +26,7 @@ public class CommentController {
     @ResponseBody
     @PostMapping(value = "/comment")
     //@RequestBody可以接受json格式的数据，把json反序列化放入CommentDTO
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest httpServletRequest) {
         User user = (User) httpServletRequest.getSession().getAttribute("user");
         if (user == null) {
@@ -36,12 +36,12 @@ public class CommentController {
 
         Comment comment = new Comment();
         comment.setCommentator(user.getId());
-        comment.setContent(commentDTO.getContent());
+        comment.setContent(commentCreateDTO.getContent());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(System.currentTimeMillis());
         comment.setLikeCount(0L);
-        comment.setParentId(commentDTO.getParentId());
-        comment.setType(commentDTO.getType());
+        comment.setParentId(commentCreateDTO.getParentId());
+        comment.setType(commentCreateDTO.getType());
 
         commentService.insert(comment);
 
